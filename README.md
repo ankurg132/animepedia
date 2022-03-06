@@ -1,4 +1,4 @@
-# starwars_guide
+# Animepedia: Anime/Manga Recommendation App
 
 A new Flutter project.
 
