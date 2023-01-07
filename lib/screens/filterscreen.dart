@@ -1,8 +1,9 @@
+import 'package:animepedia/constants/color.dart';
 import 'package:flutter/material.dart';
-import 'package:starwars_guide/models/FilterData.dart';
-import 'package:starwars_guide/models/characters.dart';
+import 'package:animepedia/models/FilterData.dart';
+import 'package:animepedia/models/characters.dart';
 import 'package:provider/provider.dart';
-import 'package:starwars_guide/screens/homepage.dart';
+import 'package:animepedia/screens/homepage.dart';
 
 import '../provider/character_call.dart';
 
@@ -15,14 +16,13 @@ class FilterScreen extends StatefulWidget {
 }
 
 class _FilterScreenState extends State<FilterScreen> {
-
   //for NSFW
   bool showNsfw = FilterData.nsfwEnabled;
   bool nsfwEnabled = false;
-  
+
   //Release Status
   String releaseDropdown = FilterData.releaseDropdown;
-  final releaseDropdownItem = [    
+  final releaseDropdownItem = [
     'NONE',
     'FINISHED',
     'RELEASING',
@@ -31,11 +31,34 @@ class _FilterScreenState extends State<FilterScreen> {
   ];
 
   //Genre
-  TextEditingController genreController = TextEditingController(text: FilterData.genreText);
+  String genreDropdown = FilterData.genreText;
+  final genreDropdownItem = [
+    "NONE",
+    "Action",
+    "Adventure",
+    "Comedy",
+    "Drama",
+    "Ecchi",
+    "Fantasy",
+    "Hentai",
+    "Horror",
+    "Mahou Shoujo",
+    "Mecha",
+    "Music",
+    "Mystery",
+    "Psychological",
+    "Romance",
+    "Sci-Fi",
+    "Slice of Life",
+    "Sports",
+    "Supernatural",
+    "Thriller"
+  ];
+  // TextEditingController genreController = TextEditingController(text: FilterData.genreText);
 
   //Media Format
   String mediaFormat = FilterData.mediaFormat;
-  final mediaFormatItem = [    
+  final mediaFormatItem = [
     'NONE',
     'TV',
     'TV_SHORT',
@@ -51,23 +74,66 @@ class _FilterScreenState extends State<FilterScreen> {
 
   @override
   Widget build(BuildContext context) {
-  final prov = Provider.of<BookProvider>(context, listen: false);
+    final prov = Provider.of<BookProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Filter'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              if (nsfwEnabled) {
+                prov.variables['isAdult'] = showNsfw;
+                FilterData.nsfwEnabled = showNsfw;
+              }
+              switch (releaseDropdown) {
+                case 'NONE':
+                  prov.variables.remove('status');
+                  break;
+                default:
+                  prov.variables['status'] = releaseDropdown;
+                  break;
+              }
+              FilterData.releaseDropdown = releaseDropdown;
+              switch (genreDropdown) {
+                case 'NONE':
+                  prov.variables.remove('genre');
+                  break;
+                default:
+                  prov.variables['genre'] = genreDropdown;
+                  break;
+              }
+              FilterData.genreText = genreDropdown;
+              switch (mediaFormat) {
+                case 'NONE':
+                  prov.variables.remove('format');
+                  break;
+                default:
+                  prov.variables['format'] = mediaFormat;
+                  break;
+              }
+              FilterData.mediaFormat = mediaFormat;
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  MyHomePage.routeName, ((route) => false));
+            },
+            icon: const Icon(Icons.search),
+          ),
+        ],
       ),
       body: Column(
         children: [
-
           //FOR NSFW
           const Text('Show NSFW'),
-          Switch( 
-            onChanged: (v){
-            setState(() {
-              showNsfw = v;
-              nsfwEnabled = true;
-            });
-          }, value: showNsfw,),
+          Switch(
+            onChanged: (v) {
+              setState(() {
+                showNsfw = v;
+                nsfwEnabled = true;
+              });
+            },
+            value: showNsfw,
+          ),
 
           //RELEASE STATUS
           Row(
@@ -76,90 +142,118 @@ class _FilterScreenState extends State<FilterScreen> {
               const Text('Release Status'),
               Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
               DropdownButton(
-                  value: releaseDropdown,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  items: releaseDropdownItem.map((String items) {
-                    return DropdownMenuItem(
+                dropdownColor: Colors.black,
+                value: releaseDropdown,
+                icon: const Icon(Icons.keyboard_arrow_down),
+                items: releaseDropdownItem.map((String items) {
+                  return DropdownMenuItem(
                       value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) { 
-                    setState(() {
-                      releaseDropdown = newValue!;
-                    });
-                  },
-                ),
+                      child: Text(
+                        items,
+                        style: const TextStyle(color: MyColors.textColor),
+                      ));
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    releaseDropdown = newValue!;
+                  });
+                },
+              ),
             ],
           ),
 
-            //genre
-            TextFormField(
-              decoration: const InputDecoration(
-                labelText: 'Genre',
+          //genre
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Genre'),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
+              DropdownButton(
+                dropdownColor: Colors.black,
+                value: genreDropdown,
+                icon: const Icon(Icons.keyboard_arrow_down),
+                items: genreDropdownItem.map((String items) {
+                  return DropdownMenuItem(
+                      value: items,
+                      child: Text(
+                        items,
+                        style: const TextStyle(color: MyColors.textColor),
+                      ));
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    genreDropdown = newValue!;
+                  });
+                },
               ),
-              onChanged: (value) {
-              },
-              controller: genreController,
-            ),
+            ],
+          ),
 
-            //media format
-            DropdownButton(
-              value: mediaFormat,
-              icon: const Icon(Icons.keyboard_arrow_down),
-              items: mediaFormatItem.map((String items) {
-                return DropdownMenuItem(
-                  value: items,
-                  child: Text(items),
-                );
-              }).toList(),
-              onChanged: (String? newValue) { 
-                setState(() {
-                  mediaFormat = newValue!;
-                });
-              },
-            ),
-          TextButton(
-              onPressed: (){
-                if(nsfwEnabled){
+          //media format
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Format'),
+              Padding(padding: EdgeInsets.symmetric(horizontal: 20)),
+              DropdownButton(
+                dropdownColor: Colors.black,
+                value: mediaFormat,
+                icon: const Icon(Icons.keyboard_arrow_down),
+                items: mediaFormatItem.map((String items) {
+                  return DropdownMenuItem(
+                      value: items,
+                      child: Text(
+                        items,
+                        style: const TextStyle(color: Colors.white),
+                      ));
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    mediaFormat = newValue!;
+                  });
+                },
+              ),
+            ],
+          ),
+          ElevatedButton(
+              onPressed: () {
+                if (nsfwEnabled) {
                   prov.variables['isAdult'] = showNsfw;
                   FilterData.nsfwEnabled = showNsfw;
                 }
-                switch(releaseDropdown){
-                  case 'NONE': prov.variables.remove('status'); break;
-                  case 'FINISHED': prov.variables['status'] = 'FINISHED'; break;
-                  case 'RELEASING': prov.variables['status'] = 'RELEASING'; break;
-                  case 'NOT_YET_RELEASED': prov.variables['status'] = 'NOT_YET_RELEASED'; break;
-                  case 'CANCELLED': prov.variables['status'] = 'CANCELLED'; break;
-                  default: break;
+                switch (releaseDropdown) {
+                  case 'NONE':
+                    prov.variables.remove('status');
+                    break;
+                  default:
+                    prov.variables['status'] = releaseDropdown;
+                    break;
                 }
                 FilterData.releaseDropdown = releaseDropdown;
-                if(genreController.text!=''){
-                  prov.variables['genre'] = genreController.text;
-                  FilterData.genreText = genreController.text;
+                switch (genreDropdown) {
+                  case 'NONE':
+                    prov.variables.remove('genre');
+                    break;
+                  default:
+                    prov.variables['genre'] = genreDropdown;
+                    break;
                 }
-                switch(mediaFormat){
-                  case 'NONE':prov.variables.remove('format'); break;
-                  case 'TV': prov.variables['format'] = 'TV'; break;
-                  case 'TV_SHORT': prov.variables['format'] = 'TV_SHORT'; break;
-                  case 'MOVIE': prov.variables['format'] = 'MOVIE'; break;
-                  case 'OVA': prov.variables['format'] = 'OVA'; break;
-                  case 'ONA': prov.variables['format'] = 'ONA'; break;
-                  case 'SPECIAL': prov.variables['format'] = 'SPECIAL'; break;
-                  case 'MUSIC': prov.variables['format'] = 'MUSIC'; break;
-                  case 'MANGA': prov.variables['format'] = 'MANGA'; break;
-                  case 'NOVEL': prov.variables['format'] = 'NOVEL'; break;
-                  case 'ONE_SHOT': prov.variables['format'] = 'ONE_SHOT'; break;
-                  default: break;
+                FilterData.genreText = genreDropdown;
+                switch (mediaFormat) {
+                  case 'NONE':
+                    prov.variables.remove('format');
+                    break;
+                  default:
+                    prov.variables['format'] = mediaFormat;
+                    break;
                 }
                 FilterData.mediaFormat = mediaFormat;
-                Navigator.of(context)
-                  .pushNamedAndRemoveUntil(MyHomePage.routeName,((route) => false));},
-              child: const Text('Save'))
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    MyHomePage.routeName, ((route) => false));
+              },
+              child: const Text('Search'))
         ],
       ),
     );
   }
 }
-
-

@@ -18,11 +18,13 @@ class AnimeData {
 
 class Data {
   Page? page;
+  List<String>? genreCollection;
 
-  Data({this.page});
+  Data({this.page, this.genreCollection});
 
   Data.fromJson(Map<String, dynamic> json) {
     page = json['Page'] != null ? new Page.fromJson(json['Page']) : null;
+    genreCollection = json['GenreCollection'].cast<String>();
   }
 
   Map<String, dynamic> toJson() {
@@ -30,6 +32,7 @@ class Data {
     if (this.page != null) {
       data['Page'] = this.page!.toJson();
     }
+    data['GenreCollection'] = this.genreCollection;
     return data;
   }
 }
@@ -94,18 +97,20 @@ class Media {
   StartDate? startDate;
   StartDate? endDate;
   CoverImage? coverImage;
-  String? bannerImage;
   int? duration;
   bool? isAdult;
   List<String>? genres;
+  List<String>? synonyms;
+  int? meanScore;
   int? averageScore;
   int? popularity;
   int? episodes;
   int? chapters;
   int? volumes;
   String? countryOfOrigin;
+  Trailer? trailer;
   String? hashtag;
-
+  String? bannerImage;
   Media(
       {this.id,
       this.title,
@@ -114,17 +119,20 @@ class Media {
       this.startDate,
       this.endDate,
       this.coverImage,
-      this.bannerImage,
       this.duration,
       this.isAdult,
       this.genres,
+      this.synonyms,
+      this.meanScore,
       this.averageScore,
       this.popularity,
       this.episodes,
       this.chapters,
       this.volumes,
       this.countryOfOrigin,
-      this.hashtag});
+      this.trailer,
+      this.hashtag,
+      this.bannerImage});
 
   Media.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -143,15 +151,19 @@ class Media {
     duration = json['duration'];
     isAdult = json['isAdult'];
     genres = json['genres'].cast<String>();
+    synonyms = json['synonyms'].cast<String>();
+    meanScore = json['meanScore'];
     averageScore = json['averageScore'];
     popularity = json['popularity'];
     episodes = json['episodes'];
     chapters = json['chapters'];
     volumes = json['volumes'];
     countryOfOrigin = json['countryOfOrigin'];
+    trailer =
+        json['trailer'] != null ? new Trailer.fromJson(json['trailer']) : null;
     hashtag = json['hashtag'];
     bannerImage = json['bannerImage'];
-    }
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -173,13 +185,19 @@ class Media {
     data['duration'] = this.duration;
     data['isAdult'] = this.isAdult;
     data['genres'] = this.genres;
+    data['synonyms'] = this.synonyms;
+    data['meanScore'] = this.meanScore;
     data['averageScore'] = this.averageScore;
     data['popularity'] = this.popularity;
     data['episodes'] = this.episodes;
     data['chapters'] = this.chapters;
     data['volumes'] = this.volumes;
     data['countryOfOrigin'] = this.countryOfOrigin;
+    if (this.trailer != null) {
+      data['trailer'] = this.trailer!.toJson();
+    }
     data['hashtag'] = this.hashtag;
+    data['bannerImage'] = this.bannerImage;
     return data;
   }
 }
@@ -230,16 +248,44 @@ class StartDate {
 
 class CoverImage {
   String? medium;
+  String? large;
+  String? color;
 
-  CoverImage({this.medium});
+  CoverImage({this.medium, this.large, this.color});
 
   CoverImage.fromJson(Map<String, dynamic> json) {
+    large = json['large'];
     medium = json['medium'];
+    color = json['color'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['medium'] = this.medium;
+    data['large'] = this.large;
+    data['color'] = this.color;
+    return data;
+  }
+}
+
+class Trailer {
+  String? id;
+  String? site;
+  String? thumbnail;
+
+  Trailer({this.id, this.site, this.thumbnail});
+
+  Trailer.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    site = json['site'];
+    thumbnail = json['thumbnail'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['medium'] = this.medium;
+    data['id'] = this.id;
+    data['site'] = this.site;
+    data['thumbnail'] = this.thumbnail;
     return data;
   }
 }

@@ -1,14 +1,14 @@
+import 'package:animepedia/constants/color.dart';
+import 'package:animepedia/screens/homepagenew.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:starwars_guide/provider/character_call.dart';
-import 'package:starwars_guide/screens/bookdetailscreen.dart';
-import 'package:starwars_guide/screens/filterscreen.dart';
+import 'package:animepedia/provider/character_call.dart';
+import 'package:animepedia/screens/animedetailscreen.dart';
+import 'package:animepedia/screens/filterscreen.dart';
 import 'screens/homepage.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(const MyApp());
 }
 
@@ -25,13 +25,33 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
-              title: 'Animepedia: Anime/Manga Recs',
-              home: const MyHomePage(title: 'Animepedia: Anime/Manga Recs'),
-              routes: {
-                MyHomePage.routeName: (context) => const MyHomePage(title: 'Animepedia: Anime/Manga Recs'),
-                BookDetailScreen.routeName: (context) => const BookDetailScreen(),
-                FilterScreen.routeName: (context) => const FilterScreen(),
-              },
+        title: 'Animepedia: Anime/Manga Recs',
+        home: const MyHomePageNew(title: 'Animepedia: Anime/Manga Recs'),
+        themeMode: ThemeMode.dark,
+        theme: ThemeData(
+            primaryColor: MyColors.primaryColor,
+            scaffoldBackgroundColor: MyColors.primaryColor,
+            iconTheme: const IconThemeData(color: MyColors.textColor),
+            primaryIconTheme: const IconThemeData(color: MyColors.textColor),
+            // inputDecorationTheme: const InputDecorationTheme(
+            //     labelStyle: TextStyle(color: MyColors.textColor,)),
+            textTheme: const TextTheme(
+              bodyText1: TextStyle(
+                color: MyColors.textColor,
+                fontSize: 18,
+              ),
+              bodyText2: TextStyle(
+                color: MyColors.textColor,
+                fontSize: 14,
+              ),
+            )),
+        routes: {
+          MyHomePage.routeName: (context) =>
+              const MyHomePage(title: 'Animepedia: Anime/Manga Recs'),
+          BookDetailScreen.routeName: (context) => BookDetailScreen(),
+          FilterScreen.routeName: (context) => const FilterScreen(),
+          MyHomePageNew.routeName: (context) => const MyHomePageNew(title: 'Animepedia: Anime/Manga Recs'),
+        },
       ),
     );
   }
