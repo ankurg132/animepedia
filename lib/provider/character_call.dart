@@ -67,20 +67,47 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
   List<AnimeData> animeData = [];
   List<Media> animeList = [];
   List<AnimeData> trendingAnime = [];
+  List<AnimeData> trendingTV = [];
+  List<AnimeData> trendingManga = [];
+  List<AnimeData> trendingMovie = [];
   // List<Results> results = [];
   String state = '';
   String searchText = '';
-  Map variables = {"perPage": "10", "sort": "POPULARITY_DESC"};
+  Map variables = {
+    "perPage": "10",
+    "sort": "POPULARITY_DESC",
+    "isAdult": false
+  };
+  final genres = [
+    "Action",
+    "Adventure",
+    "Comedy",
+    "Drama",
+    "Ecchi",
+    "Fantasy",
+    "Hentai",
+    "Horror",
+    "Mahou Shoujo",
+    "Mecha",
+    "Music",
+    "Mystery",
+    "Psychological",
+    "Romance",
+    "Sci-Fi",
+    "Slice of Life",
+    "Sports",
+    "Supernatural",
+    "Thriller"
+  ];
 
   Future resetVariable() async {
     variables.clear();
     animeData.clear();
     animeList.clear();
     state = '';
-    variables = {"perPage": "10", "sort": "POPULARITY_DESC"};
+    variables = {"perPage": "10", "sort": "POPULARITY_DESC", "isAdult": false};
     FilterData.genreText = 'NONE';
     FilterData.releaseDropdown = 'NONE';
-    FilterData.nsfwEnabled = false;
     FilterData.mediaFormat = 'NONE';
     notifyListeners();
     await getData("0");
@@ -88,6 +115,9 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
 
   Future getHomePageData() async {
     getTrending();
+    getTrendingAnime();
+    getTrendingManga();
+    getTrendingMovie();
   }
 
   Future getTrending() async {
@@ -108,6 +138,83 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
       notifyListeners();
       trendingAnime.add(AnimeData.fromJson(jsonDecode(response.body)));
       return trendingAnime.last.data?.page?.media;
+    }
+  }
+
+  Future getTrendingMovie() async {
+    Map variables = {
+      "perPage": "5",
+      "sort": "TRENDING_DESC",
+      "format": "MOVIE"
+    };
+    print("SENDING REQ");
+    print("VAR NOW IS: " + variables.toString());
+    final response = await http.post(
+      Uri.parse('https://graphql.anilist.co'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode({"query": query, "variables": variables}),
+    );
+    if (response.statusCode == 200) {
+      log(response.body);
+      print(response.body);
+      notifyListeners();
+      trendingMovie.add(AnimeData.fromJson(jsonDecode(response.body)));
+      return trendingMovie.last.data?.page?.media;
+    }
+  }
+
+  Future getTrendingAnime() async {
+    Map variables = {
+      "perPage": "5",
+      "sort": "TRENDING_DESC",
+      "format": "TV",
+      "isAdult": false
+    };
+    print("SENDING REQ");
+    print("VAR NOW IS: " + variables.toString());
+    final response = await http.post(
+      Uri.parse('https://graphql.anilist.co'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode({"query": query, "variables": variables}),
+    );
+    if (response.statusCode == 200) {
+      log(response.body);
+      print(response.body);
+      notifyListeners();
+      trendingTV.add(AnimeData.fromJson(jsonDecode(response.body)));
+      return trendingTV.last.data?.page?.media;
+    }
+  }
+
+  Future getTrendingManga() async {
+    Map variables = {
+      "perPage": "5",
+      "sort": "TRENDING_DESC",
+      "format": "MANGA",
+      "isAdult": false
+    };
+    print("SENDING REQ");
+    print("VAR NOW IS: " + variables.toString());
+    final response = await http.post(
+      Uri.parse('https://graphql.anilist.co'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode({"query": query, "variables": variables}),
+    );
+    if (response.statusCode == 200) {
+      log(response.body);
+      print(response.body);
+      notifyListeners();
+      trendingManga.add(AnimeData.fromJson(jsonDecode(response.body)));
+      return trendingManga.last.data?.page?.media;
     }
   }
 

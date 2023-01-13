@@ -8,6 +8,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:animepedia/provider/character_call.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:animepedia/screens/filterscreen.dart';
+import '../widget/genreHomeContainer.dart';
 import 'animedetailscreen.dart';
 import 'homepage.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -48,11 +49,9 @@ class _MyHomePageState extends State<MyHomePageNew> {
                     text: 'All',
                   ),
                   Tab(
-                    text: 'Movies',
-                  ),
-                  Tab(
                     text: 'TV Shows',
                   ),
+                  Tab(text: 'Movies'),
                   Tab(
                     text: 'Manga',
                   ),
@@ -109,7 +108,13 @@ class HomeTabBarWidget extends StatelessWidget {
         future: prov.getHomePageData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            print("Home Page Data Loading...");
+            return Container(
+                color: MyColors.primaryColor,
+                width: double.infinity,
+                height: double.infinity,
+                child: const Center(child: CircularProgressIndicator()));
+            // return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             print(snapshot.error);
             return Center(
@@ -126,14 +131,15 @@ class HomeTabBarWidget extends StatelessWidget {
             ));
           }
           if (snapshot.connectionState == ConnectionState.done) {
+            print("Home Page Data Loaded...");
             return const HomeDataWidget();
           }
           return Container();
         },
       ),
-      Container(),
-      Container(),
-      Container()
+      HomeDataTVWidget(),
+      HomeDataMovieWidget(),
+      HomeDataMangaWidget()
     ]);
   }
 }
@@ -146,11 +152,100 @@ class HomeDataWidget extends StatefulWidget {
 }
 
 class _DataWidgetState extends State<HomeDataWidget> {
-  final TextEditingController searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final prov = Provider.of<BookProvider>(context);
     final data = prov.trendingAnime.last.data?.page?.media;
+    // print(data?.coverImage?.color.toString());
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text(
+            'Trending Anime',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBoxMedSize(),
+          (data?.length ?? 0) > 0
+              ? CarouselSlider(
+                  options: CarouselOptions(height: 250.0, autoPlay: true),
+                  items: [0, 1, 2, 3, 4].map((i) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return InkWell(
+                          onTap: (() => {
+                                Navigator.pushNamed(
+                                    context, BookDetailScreen.routeName,
+                                    arguments: data?[i])
+                              }),
+                          child: Card(
+                              // color: HexColor(data?[i].coverImage?.color ?? '#ffffff'),
+                              color: Colors.transparent,
+                              child: Column(
+                                children: [
+                                  Image.network(
+                                    data?[i].coverImage?.large.toString() ?? '',
+                                    fit: BoxFit.fitWidth,
+                                    height: 200,
+                                    width: 500,
+                                  ),
+                                  SizedBoxMedSize(),
+                                  Text(
+                                    data?[i].title?.english ??
+                                        data?[i].title?.romaji ??
+                                        '',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],
+                              )),
+                        );
+                      },
+                    );
+                  }).toList(),
+                )
+              : Container(),
+          //rows of genre categories
+          SizedBoxMedSize(),
+          GenreHomeContainer(prov: prov),
+          //row of top anime in card view using horizontal listview with 5 items
+          SizedBoxMedSize(),
+          ListTile(
+            leading: Text(
+              'Top Anime',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            trailing: TextButton(
+              onPressed: () {
+                Navigator.pushNamed(context, MyHomePage.routeName);
+              },
+              child: Text('See All'),
+            ),
+          ),
+          SizedBoxMedSize(),
+          // (data?.length ?? 0) > 0
+          ShowTopAnime(data),
+          // : Container(),
+        ]),
+      ),
+    );
+  }
+}
+
+class HomeDataTVWidget extends StatefulWidget {
+  const HomeDataTVWidget({Key? key}) : super(key: key);
+
+  @override
+  _DataWidgetTVState createState() => _DataWidgetTVState();
+}
+
+class _DataWidgetTVState extends State<HomeDataTVWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final prov = Provider.of<BookProvider>(context);
+    final data = prov.trendingTV.last.data?.page?.media;
+    prov.variables['format'] = 'TV';
     // print(data?.coverImage?.color.toString());
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -160,42 +255,234 @@ class _DataWidgetState extends State<HomeDataWidget> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         SizedBoxMedSize(),
-        CarouselSlider(
-          options: CarouselOptions(height: 250.0, autoPlay: true),
-          items: [0, 1, 2, 3, 4].map((i) {
-            return Builder(
-              builder: (BuildContext context) {
-                return InkWell(
-                  onTap: (() => {
-                        Navigator.pushNamed(context, BookDetailScreen.routeName,
-                            arguments: data?[i])
-                      }),
-                  child: Card(
-                      // color: HexColor(data?[i].coverImage?.color ?? '#ffffff'),
-                      color: Colors.transparent,
-                      child: Column(
-                        children: [
-                          Image.network(
-                            data?[i].coverImage?.large.toString() ?? '',
-                            fit: BoxFit.fitWidth,
-                            height: 200,
-                            width: 500,
-                          ),
-                          SizedBoxMedSize(),
-                          Text(
-                            data?[i].title?.english ??
-                                data?[i].title?.romaji ??
-                                '',
-                            style: TextStyle(fontSize: 18, overflow: TextOverflow.ellipsis),
-                          ),
-                        ],
-                      )),
-                );
-              },
-            );
-          }).toList(),
-        )
+        (data?.length ?? 0) > 0
+            ? CarouselSlider(
+                options: CarouselOptions(height: 250.0, autoPlay: true),
+                items: [0, 1, 2, 3, 4].map((i) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return InkWell(
+                        onTap: (() => {
+                              Navigator.pushNamed(
+                                  context, BookDetailScreen.routeName,
+                                  arguments: data?[i])
+                            }),
+                        child: Card(
+                            // color: HexColor(data?[i].coverImage?.color ?? '#ffffff'),
+                            color: Colors.transparent,
+                            child: Column(
+                              children: [
+                                Image.network(
+                                  data?[i].coverImage?.large.toString() ?? '',
+                                  fit: BoxFit.fitWidth,
+                                  height: 200,
+                                  width: 500,
+                                ),
+                                SizedBoxMedSize(),
+                                Text(
+                                  data?[i].title?.english ??
+                                      data?[i].title?.romaji ??
+                                      '',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
+                              ],
+                            )),
+                      );
+                    },
+                  );
+                }).toList(),
+              )
+            : Container(),
+        GenreHomeContainer(prov: prov),
       ]),
     );
   }
+}
+
+class HomeDataMangaWidget extends StatefulWidget {
+  const HomeDataMangaWidget({Key? key}) : super(key: key);
+
+  @override
+  _DataWidgetMangaState createState() => _DataWidgetMangaState();
+}
+
+class _DataWidgetMangaState extends State<HomeDataMangaWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final prov = Provider.of<BookProvider>(context);
+    final data = prov.trendingManga.last.data?.page?.media;
+    prov.variables['format'] = 'MANGA';
+    // print(data?.coverImage?.color.toString());
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text(
+          'Trending Anime',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBoxMedSize(),
+        (data?.length ?? 0) > 0
+            ? CarouselSlider(
+                options: CarouselOptions(height: 250.0, autoPlay: true),
+                items: [0, 1, 2, 3, 4].map((i) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return InkWell(
+                        onTap: (() => {
+                              Navigator.pushNamed(
+                                  context, BookDetailScreen.routeName,
+                                  arguments: data?[i])
+                            }),
+                        child: Card(
+                            // color: HexColor(data?[i].coverImage?.color ?? '#ffffff'),
+                            color: Colors.transparent,
+                            child: Column(
+                              children: [
+                                Image.network(
+                                  data?[i].coverImage?.large.toString() ?? '',
+                                  fit: BoxFit.fitWidth,
+                                  height: 200,
+                                  width: 500,
+                                ),
+                                SizedBoxMedSize(),
+                                Text(
+                                  data?[i].title?.english ??
+                                      data?[i].title?.romaji ??
+                                      '',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
+                              ],
+                            )),
+                      );
+                    },
+                  );
+                }).toList(),
+              )
+            : Container(),
+        GenreHomeContainer(prov: prov),
+      ]),
+    );
+  }
+}
+
+class HomeDataMovieWidget extends StatefulWidget {
+  const HomeDataMovieWidget({Key? key}) : super(key: key);
+
+  @override
+  _DataWidgetMovieState createState() => _DataWidgetMovieState();
+}
+
+class _DataWidgetMovieState extends State<HomeDataMovieWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final prov = Provider.of<BookProvider>(context);
+    final data = prov.trendingMovie.last.data?.page?.media;
+    prov.variables['format'] = 'MOVIE';
+    // print(data?.coverImage?.color.toString());
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text(
+          'Trending Anime',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        SizedBoxMedSize(),
+        (data?.length ?? 0) > 0
+            ? CarouselSlider(
+                options: CarouselOptions(height: 250.0, autoPlay: true),
+                items: [0, 1, 2, 3, 4].map((i) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return InkWell(
+                        onTap: (() => {
+                              Navigator.pushNamed(
+                                  context, BookDetailScreen.routeName,
+                                  arguments: data?[i])
+                            }),
+                        child: Card(
+                            // color: HexColor(data?[i].coverImage?.color ?? '#ffffff'),
+                            color: Colors.transparent,
+                            child: Column(
+                              children: [
+                                Image.network(
+                                  data?[i].coverImage?.large.toString() ?? '',
+                                  fit: BoxFit.fitWidth,
+                                  height: 200,
+                                  width: 500,
+                                ),
+                                SizedBoxMedSize(),
+                                Text(
+                                  data?[i].title?.english ??
+                                      data?[i].title?.romaji ??
+                                      '',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      overflow: TextOverflow.ellipsis),
+                                ),
+                              ],
+                            )),
+                      );
+                    },
+                  );
+                }).toList(),
+              )
+            : Container(),
+        GenreHomeContainer(prov: prov),
+      ]),
+    );
+  }
+}
+
+Widget ShowTopAnime(List<Media>? data) {
+  return SizedBox(
+    height: 280,
+    width: double.infinity,
+    child: ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: data?.length ?? 0,
+      itemBuilder: (context, index) {
+        return InkWell(
+          onTap: (() => {
+                Navigator.pushNamed(context, BookDetailScreen.routeName,
+                    arguments: data?[index])
+              }),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              color: Colors.white12,
+              child: Column(
+                children: <Widget>[
+                  ExtendedImage.network(
+                    data?[index].coverImage?.medium.toString() ?? '',
+                    width: 150,
+                    height: 230,
+                    fit: BoxFit.fill,
+                    cache: true,
+                    //cancelToken: cancellationToken,
+                  ),
+                  const Spacer(),
+                  SizedBox(
+                    width: 150,
+                    child: Text(
+                      data?[index].title?.english ??
+                          data?[index].title?.romaji ??
+                          data?[index].title?.native ??
+                          '',
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                    ),
+                  ),
+                  const Spacer()
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }

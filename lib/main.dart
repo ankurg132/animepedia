@@ -50,7 +50,8 @@ class MyApp extends StatelessWidget {
               const MyHomePage(title: 'Animepedia: Anime/Manga Recs'),
           BookDetailScreen.routeName: (context) => BookDetailScreen(),
           FilterScreen.routeName: (context) => const FilterScreen(),
-          MyHomePageNew.routeName: (context) => const MyHomePageNew(title: 'Animepedia: Anime/Manga Recs'),
+          MyHomePageNew.routeName: (context) =>
+              const MyHomePageNew(title: 'Animepedia: Anime/Manga Recs'),
         },
       ),
     );

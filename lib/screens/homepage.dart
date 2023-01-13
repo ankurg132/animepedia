@@ -35,7 +35,10 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: MyColors.primaryColor,
-          title: Text(widget.title, style: const TextStyle(color: MyColors.secColor),),
+          title: Text(
+            widget.title,
+            style: const TextStyle(color: MyColors.secColor),
+          ),
         ),
         body: FutureBuilder(
           future:
@@ -70,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
             print(FilterData.genreText);
             print(FilterData.releaseDropdown);
             print(FilterData.mediaFormat);
-            print(FilterData.nsfwEnabled);
             Navigator.of(context).pushNamed(FilterScreen.routeName);
           },
         ),

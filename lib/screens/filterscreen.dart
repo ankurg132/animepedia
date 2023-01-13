@@ -16,10 +16,6 @@ class FilterScreen extends StatefulWidget {
 }
 
 class _FilterScreenState extends State<FilterScreen> {
-  //for NSFW
-  bool showNsfw = FilterData.nsfwEnabled;
-  bool nsfwEnabled = false;
-
   //Release Status
   String releaseDropdown = FilterData.releaseDropdown;
   final releaseDropdownItem = [
@@ -83,10 +79,6 @@ class _FilterScreenState extends State<FilterScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              if (nsfwEnabled) {
-                prov.variables['isAdult'] = showNsfw;
-                FilterData.nsfwEnabled = showNsfw;
-              }
               switch (releaseDropdown) {
                 case 'NONE':
                   prov.variables.remove('status');
@@ -123,18 +115,6 @@ class _FilterScreenState extends State<FilterScreen> {
       ),
       body: Column(
         children: [
-          //FOR NSFW
-          const Text('Show NSFW'),
-          Switch(
-            onChanged: (v) {
-              setState(() {
-                showNsfw = v;
-                nsfwEnabled = true;
-              });
-            },
-            value: showNsfw,
-          ),
-
           //RELEASE STATUS
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -217,10 +197,6 @@ class _FilterScreenState extends State<FilterScreen> {
           ),
           ElevatedButton(
               onPressed: () {
-                if (nsfwEnabled) {
-                  prov.variables['isAdult'] = showNsfw;
-                  FilterData.nsfwEnabled = showNsfw;
-                }
                 switch (releaseDropdown) {
                   case 'NONE':
                     prov.variables.remove('status');
