@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:animepedia/location/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:animepedia/models/FilterData.dart';
@@ -85,7 +86,6 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
     "Drama",
     "Ecchi",
     "Fantasy",
-    "Hentai",
     "Horror",
     "Mahou Shoujo",
     "Mecha",
@@ -99,6 +99,30 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
     "Supernatural",
     "Thriller"
   ];
+
+  Future getAPILink() async {
+    final response = await http.get(
+        Uri.parse(
+            'https://api.jsonbin.io/v3/b/63cbcb50c0e7653a055df478?meta=false'),
+        headers: <String, String>{
+          'X-Master-Key':
+              '\$2b\$10\$RYSTcmLz39BTePSp8xPVrOPKftCZN46lvCeYoB7UnU3YMVz53/aEK'
+        });
+    print("REQ SENT");
+    if (response.statusCode == 200) {
+      print("REQ 200");
+      log(response.body);
+      print(response.body);
+      final data = jsonDecode(response.body);
+      print(data['anime']);
+      Location.after2 = data['anime'];
+      notifyListeners();
+    }
+    await getTrending();
+    await getTrendingAnime();
+    await getTrendingManga();
+    await getTrendingMovie();
+  }
 
   Future resetVariable() async {
     variables.clear();
@@ -114,18 +138,15 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
   }
 
   Future getHomePageData() async {
-    getTrending();
-    getTrendingAnime();
-    getTrendingManga();
-    getTrendingMovie();
+    await getAPILink();
   }
 
   Future getTrending() async {
-    Map variables = {"perPage": "5", "sort": "TRENDING_DESC"};
+    Map variables = {"perPage": "5", "sort": "TRENDING_DESC", "isAdult": false};
     print("SENDING REQ");
     print("VAR NOW IS: " + variables.toString());
     final response = await http.post(
-      Uri.parse('https://graphql.anilist.co'),
+      Uri.parse(Location.after2),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -145,12 +166,13 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
     Map variables = {
       "perPage": "5",
       "sort": "TRENDING_DESC",
-      "format": "MOVIE"
+      "format": "MOVIE",
+      "isAdult": false
     };
     print("SENDING REQ");
     print("VAR NOW IS: " + variables.toString());
     final response = await http.post(
-      Uri.parse('https://graphql.anilist.co'),
+      Uri.parse(Location.after2),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -176,7 +198,7 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
     print("SENDING REQ");
     print("VAR NOW IS: " + variables.toString());
     final response = await http.post(
-      Uri.parse('https://graphql.anilist.co'),
+      Uri.parse(Location.after2),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -202,7 +224,7 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
     print("SENDING REQ");
     print("VAR NOW IS: " + variables.toString());
     final response = await http.post(
-      Uri.parse('https://graphql.anilist.co'),
+      Uri.parse(Location.after2),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -220,13 +242,14 @@ query (\$page: Int, \$perPage: Int, \$sort: [MediaSort], \$search: String, \$isA
 
   Future getData(String page) async {
     variables["page"] = page;
+    variables["isAdult"] = false;
     // if(search!=''){
     //   variables["search"] = search;
     // }
     print("SENDING REQ");
     print("VAR NOW IS: " + variables.toString());
     final response = await http.post(
-      Uri.parse('https://graphql.anilist.co'),
+      Uri.parse(Location.after2),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Accept': 'application/json',

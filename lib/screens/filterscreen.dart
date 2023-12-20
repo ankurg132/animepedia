@@ -1,11 +1,15 @@
+import 'dart:math';
+
+import 'package:animepedia/adfunctions/adfunc.dart';
 import 'package:animepedia/constants/color.dart';
 import 'package:flutter/material.dart';
 import 'package:animepedia/models/FilterData.dart';
 import 'package:animepedia/models/characters.dart';
 import 'package:provider/provider.dart';
 import 'package:animepedia/screens/homepage.dart';
-
+import '../location/api.dart';
 import '../provider/character_call.dart';
+// import 'package:applovin_max/applovin_max.dart';
 
 class FilterScreen extends StatefulWidget {
   const FilterScreen({Key? key}) : super(key: key);
@@ -36,7 +40,6 @@ class _FilterScreenState extends State<FilterScreen> {
     "Drama",
     "Ecchi",
     "Fantasy",
-    "Hentai",
     "Horror",
     "Mahou Shoujo",
     "Mecha",
@@ -195,8 +198,16 @@ class _FilterScreenState extends State<FilterScreen> {
               ),
             ],
           ),
+          // FacebookBannerAd(
+          //   placementId: "380574020551996_380576403885091",
+          //   bannerSize: BannerSize.STANDARD,
+          // ),
+          // MaxAdView(
+          //   adUnitId: Location.bannerAdId,
+          //   adFormat: AdFormat.banner,
+          // ),
           ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 switch (releaseDropdown) {
                   case 'NONE':
                     prov.variables.remove('status');
@@ -226,6 +237,14 @@ class _FilterScreenState extends State<FilterScreen> {
                 FilterData.mediaFormat = mediaFormat;
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     MyHomePage.routeName, ((route) => false));
+                // FacebookInterstitialAd.loadInterstitialAd(
+                //   placementId: "380574020551996_380576503885081",
+                //   listener: (result, value) {
+                //     if (result == InterstitialAdResult.LOADED)
+                //       FacebookInterstitialAd.showInterstitialAd(delay: 5000);
+                //   },
+                // );
+                // loadInterstitial();
               },
               child: const Text('Search'))
         ],

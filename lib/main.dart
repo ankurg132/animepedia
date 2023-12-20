@@ -6,9 +6,13 @@ import 'package:animepedia/provider/character_call.dart';
 import 'package:animepedia/screens/animedetailscreen.dart';
 import 'package:animepedia/screens/filterscreen.dart';
 import 'screens/homepage.dart';
+// import 'package:applovin_max/applovin_max.dart';
 
-void main() {
+void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // Map? sdkConfiguration = await AppLovinMAX.initialize(
+  //     'uicNLf8N8Z6CupLurBDKWofB95QiOgHRT8348DDPwnbdVrV7_Mkarhqlvl59N0mpghTD6pI6zHsrMvGCEWqdGX');
+  // AppLovinMAX.showMediationDebugger();
   runApp(const MyApp());
 }
 

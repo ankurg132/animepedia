@@ -10,9 +10,11 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:animepedia/screens/filterscreen.dart';
 import '../widget/genreHomeContainer.dart';
 import 'animedetailscreen.dart';
+// import 'package:applovin_max/applovin_max.dart';
 import 'homepage.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
+// import 'package:facebook_audience_network/facebook_audience_network.dart';
 
 class MyHomePageNew extends StatefulWidget {
   const MyHomePageNew({Key? key, required this.title}) : super(key: key);
@@ -219,6 +221,13 @@ class _DataWidgetState extends State<HomeDataWidget> {
             trailing: TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, MyHomePage.routeName);
+                // FacebookInterstitialAd.loadInterstitialAd(
+                //   placementId: "380574020551996_380576503885081",
+                //   listener: (result, value) {
+                //     if (result == InterstitialAdResult.LOADED)
+                //       FacebookInterstitialAd.showInterstitialAd(delay: 500);
+                //   },
+                // );
               },
               child: Text('See All'),
             ),
@@ -296,6 +305,10 @@ class _DataWidgetTVState extends State<HomeDataTVWidget> {
               )
             : Container(),
         GenreHomeContainer(prov: prov),
+        // const MaxAdView(
+        //   adUnitId: '3a1751bb47b5efbc',
+        //   adFormat: AdFormat.banner,
+        // )
       ]),
     );
   }
@@ -364,6 +377,15 @@ class _DataWidgetMangaState extends State<HomeDataMangaWidget> {
               )
             : Container(),
         GenreHomeContainer(prov: prov),
+        // MaxAdView(
+        //     adUnitId: '3a1751bb47b5efbc',
+        //     adFormat: AdFormat.banner,
+        //     listener: AdViewAdListener(
+        //         onAdLoadedCallback: (ad) {},
+        //         onAdLoadFailedCallback: (adUnitId, error) {},
+        //         onAdClickedCallback: (ad) {},
+        //         onAdExpandedCallback: (ad) {},
+        //         onAdCollapsedCallback: (ad) {}))
       ]),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:animepedia/adfunctions/adfunc.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/color.dart';
@@ -34,6 +35,14 @@ class GenreHomeContainer extends StatelessWidget {
                     prov.variables['genre'] = prov.genres[index];
                     Navigator.of(context).pushNamedAndRemoveUntil(
                         MyHomePage.routeName, ((route) => false));
+                    // FacebookInterstitialAd.loadInterstitialAd(
+                    //   placementId: "380574020551996_380576503885081",
+                    //   listener: (result, value) {
+                    //     if (result == InterstitialAdResult.LOADED)
+                    //       FacebookInterstitialAd.showInterstitialAd(delay: 500);
+                    //   },
+                    // );
+                    // loadInterstitial();
                   },
                   child: Container(
                     margin: const EdgeInsets.all(8),

@@ -1,11 +1,12 @@
+import 'package:animepedia/location/api.dart';
 import 'package:flutter/material.dart';
-
 import '../constants/color.dart';
 import '../models/FilterData.dart';
 import '../models/characters.dart';
 import '../provider/character_call.dart';
 import '../screens/animedetailscreen.dart';
 import '../screens/homepage.dart';
+// import 'package:applovin_max/applovin_max.dart';
 import 'package:provider/provider.dart';
 import 'package:animepedia/constants/color.dart';
 import 'package:animepedia/models/FilterData.dart';
@@ -59,6 +60,10 @@ class _DataWidgetState extends State<DataWidget> {
     _pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
+
+    // const banner_ad_unit_id = "3a1751bb47b5efbc";
+    // AppLovinMAX.createBanner(banner_ad_unit_id, AdViewPosition.bottomCenter);
+    // AppLovinMAX.showBanner(banner_ad_unit_id);
     super.initState();
   }
 
@@ -123,47 +128,54 @@ class _DataWidgetState extends State<DataWidget> {
         child: Text('Most Popular: '),
       ),
       Expanded(
-          child:
-              PagedGridView<int, Media>(
-                  pagingController: _pagingController,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, childAspectRatio: 3.0 / 4.6),
-                  builderDelegate: PagedChildBuilderDelegate<Media>(
-                    itemBuilder: (context, item, index) => InkWell(
-                      onTap: () {
-                        FilterData.videoId = item.trailer?.id ?? '';
-                        Navigator.pushNamed(context, BookDetailScreen.routeName,
-                            arguments: item);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          color: Colors.white12,
-                          child: Column(
-                            children: <Widget>[
-                              ExtendedImage.network(
-                                item.coverImage?.medium.toString() ?? '',
-                                width: double.infinity,
-                                height: 230,
-                                fit: BoxFit.fitHeight,
-                                cache: true,
-                                //cancelToken: cancellationToken,
-                              ),
-                              const Spacer(),
-                              Text(
-                                item.title?.english ??
-                                    item.title?.romaji ??
-                                    item.title?.native ??
-                                    '',
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const Spacer()
-                            ],
+          child: PagedGridView<int, Media>(
+              pagingController: _pagingController,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, childAspectRatio: 3.0 / 4.6),
+              builderDelegate: PagedChildBuilderDelegate<Media>(
+                itemBuilder: (context, item, index) => InkWell(
+                  onTap: () {
+                    FilterData.videoId = item.trailer?.id ?? '';
+                    Navigator.pushNamed(context, BookDetailScreen.routeName,
+                        arguments: item);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Card(
+                      color: Colors.white12,
+                      child: Column(
+                        children: <Widget>[
+                          ExtendedImage.network(
+                            item.coverImage?.medium.toString() ?? '',
+                            width: double.infinity,
+                            height: 230,
+                            fit: BoxFit.fitHeight,
+                            cache: true,
+                            //cancelToken: cancellationToken,
                           ),
-                        ),
+                          const Spacer(),
+                          Text(
+                            item.title?.english ??
+                                item.title?.romaji ??
+                                item.title?.native ??
+                                '',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const Spacer()
+                        ],
                       ),
                     ),
-                  )))
+                  ),
+                ),
+              ))),
+      // FacebookBannerAd(
+      //   placementId: "380574020551996_380576403885091",
+      //   bannerSize: BannerSize.STANDARD,
+      // ),
+      // MaxAdView(
+      //   adUnitId: Location.bannerAdId,
+      //   adFormat: AdFormat.banner,
+      // )
     ]);
   }
 }

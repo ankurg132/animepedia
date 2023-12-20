@@ -5,6 +5,9 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import 'package:flutter_html/flutter_html.dart';
+// import 'package:applovin_max/applovin_max.dart';
+
+import '../location/api.dart';
 
 class BookDetailScreen extends StatefulWidget {
   BookDetailScreen({Key? key}) : super(key: key);
@@ -27,11 +30,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         showFullscreenButton: true,
         loop: true,
       ),
-    )..onInit = () {
-        _controller.loadVideoById(
-          videoId: FilterData.videoId,
-        );
-      };
+    );
   }
 
   // YoutubePlayerController _controller = YoutubePlayerController(
@@ -46,6 +45,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Widget build(BuildContext context) {
     final Media results = ModalRoute.of(context)!.settings.arguments as Media;
     List<String> genres = results.genres ?? [];
+    _controller.loadVideo(
+        "https://youtube.com/watch?v=${results.trailer?.id.toString()}");
     return YoutubePlayerScaffold(
         controller: _controller,
         builder: (context, player) {
@@ -96,11 +97,21 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     Text(
                         "Originated In: ${results.countryOfOrigin.toString()}"),
                     const SizedBoxMedSize(),
-                    results.trailer?.site == 'youtube' ? player : Container(),
+                    results.trailer?.site == 'youtube'
+                        ? player
+                        : Container(),
                     const SizedBoxMedSize(),
                     Html(
                       data: results.description.toString(),
                     ),
+                    // FacebookBannerAd(
+                    //   placementId: "380574020551996_380576403885091",
+                    //   bannerSize: BannerSize.STANDARD,
+                    // ),
+                    // MaxAdView(
+                    //   adUnitId: Location.bannerAdId,
+                    //   adFormat: AdFormat.banner,
+                    // ),
                     // Text(results.description.toString()),
                     const SizedBoxMedSize(),
                     Text("GENRE: ${results.genres.toString()}"),
@@ -128,6 +139,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                     Text(
                         "START DATE: ${results.startDate?.day.toString()}/${results.startDate?.month.toString()}/${results.startDate?.year.toString()}"),
                     const SizedBoxMedSize(),
+                    // MaxAdView(
+                    //   adUnitId: Location.bannerAdId,
+                    //   adFormat: AdFormat.banner,
+                    // ),
                   ],
                 ),
               ),
